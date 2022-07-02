@@ -1,0 +1,7 @@
+{
+    "meta": {
+        "message": "Login Failed",
+        "code": 422,
+        "status": "Error"
+    }
+}
