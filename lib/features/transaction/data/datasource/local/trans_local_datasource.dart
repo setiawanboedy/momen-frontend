@@ -1,11 +1,14 @@
-import 'package:momen/core/error/exceptions.dart';
-import 'package:momen/features/network/db/trans_database.dart';
+import 'package:momen/core/usecase/usecase.dart';
+import 'package:momen/features/transaction/data/datasource/remote/model/transaction_list_response.dart';
+
+import '../../../../../core/error/exceptions.dart';
+import '../../../../network/db/trans_database.dart';
 
 import '../../../domain/usecase/post_transaction.dart';
 
 abstract class TransLocalDatasource {
-  Future<int> createTransaction(TransactionDBParams params);
-  
+  Future<int> createDBTransaction(TransactionParams params);
+  Future<TransactionListResponse> getAllDBTransaction(NoParams params);
 }
 
 class TransLocalDatasourceImpl implements TransLocalDatasource {
@@ -14,7 +17,7 @@ class TransLocalDatasourceImpl implements TransLocalDatasource {
   TransLocalDatasourceImpl(this._database);
 
   @override
-  Future<int> createTransaction(TransactionDBParams params) async {
+  Future<int> createDBTransaction(TransactionParams params) async {
     try {
       final response = await _database.createTrans(params);
       if (response != 0) {
@@ -22,6 +25,17 @@ class TransLocalDatasourceImpl implements TransLocalDatasource {
       } else {
         throw CacheException("not found");
       }
+    } catch (e) {
+      throw CacheException(e.toString());
+    }
+  }
+
+  @override
+  Future<TransactionListResponse> getAllDBTransaction(
+      NoParams params) async {
+    try {
+      final response = await _database.getAllTrans(params);
+      return response;
     } catch (e) {
       throw CacheException(e.toString());
     }

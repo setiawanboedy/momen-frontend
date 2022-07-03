@@ -24,7 +24,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _initData() {
     if (sl<AuthPrefManager>().isLogin) {
-      context.goToReplace(AppRoute.mainScreen);
+      if (sl<AuthPrefManager>().loadTrans) {
+        context.goToReplace(AppRoute.mainScreen);
+      } else {
+        context.goTo(AppRoute.loadFromApi);
+      }
+      context.goToReplace(AppRoute.loadFromApi);
     } else {
       context.goToReplace(AppRoute.authScreen);
     }

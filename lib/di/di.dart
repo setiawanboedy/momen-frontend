@@ -1,19 +1,10 @@
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
-import 'package:momen/features/transaction/data/datasource/local/trans_local_datasource.dart';
-import 'package:momen/features/transaction/domain/usecase/update_transaction.dart';
-import 'package:momen/features/transaction/presentation/updatecubit/transaction_update_cubit.dart';
-import '../features/transaction/domain/usecase/del_transacton.dart';
-import '../features/transaction/domain/usecase/get_detail_transaction.dart';
-import '../features/transaction/presentation/getdetailcubit/transaction_detail_cubit.dart';
-import '../features/transaction/data/datasource/local/trans_pref_manager.dart';
-import '../features/transaction/domain/usecase/get_transaction_list.dart';
-import '../features/transaction/presentation/deletecubit/transaction_delete_cubit.dart';
-import '../features/transaction/presentation/getcubit/transaction_list_cubit.dart';
-import '../features/transaction/data/datasource/remote/trans_remote_datasource.dart';
-import '../features/transaction/data/repository/trans_repository_impl.dart';
-import '../features/transaction/domain/repository/trans_repository.dart';
-import '../features/transaction/domain/usecase/post_transaction.dart';
+import 'package:momen/features/transaction/domain/usecase/load_transaction.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../core/network/network_info.dart';
 import '../features/auth/data/datasources/local/auth_pref_manager.dart';
 import '../features/auth/data/datasources/remote/auth_remote_datasources.dart';
 import '../features/auth/data/repository/auth_repository_impl.dart';
@@ -23,10 +14,23 @@ import '../features/auth/domain/usecase/post_register.dart';
 import '../features/auth/presentation/cubit/login_cubit.dart';
 import '../features/auth/presentation/cubit/register_cubit.dart';
 import '../features/home/settings/cubit/settings_cubit.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../features/network/api/dio_client.dart';
+import '../features/network/db/trans_database.dart';
+import '../features/transaction/data/datasource/local/trans_local_datasource.dart';
+import '../features/transaction/data/datasource/local/trans_pref_manager.dart';
+import '../features/transaction/data/datasource/remote/trans_remote_datasource.dart';
+import '../features/transaction/data/repository/trans_repository_impl.dart';
+import '../features/transaction/domain/repository/trans_repository.dart';
+import '../features/transaction/domain/usecase/del_transacton.dart';
+import '../features/transaction/domain/usecase/get_detail_transaction.dart';
+import '../features/transaction/domain/usecase/get_transaction_list.dart';
+import '../features/transaction/domain/usecase/post_transaction.dart';
+import '../features/transaction/domain/usecase/update_transaction.dart';
+import '../features/transaction/presentation/deletecubit/transaction_delete_cubit.dart';
+import '../features/transaction/presentation/getcubit/transaction_list_cubit.dart';
+import '../features/transaction/presentation/getdetailcubit/transaction_detail_cubit.dart';
 import '../features/transaction/presentation/postcubit/transaction_cubit.dart';
+import '../features/transaction/presentation/updatecubit/transaction_update_cubit.dart';
 
 GetIt sl = GetIt.instance;
 
@@ -48,6 +52,8 @@ Future<void> serviceLocator({bool isUnitTest = false}) async {
     cubit();
   } else {
     sl.registerSingleton<DioClient>(DioClient());
+    sl.registerSingleton<TransDatabase>(TransDatabase());
+    network();
     datasources();
     repositories();
     useCase();
@@ -67,8 +73,8 @@ void datasources() {
       () => AuthRemoteDataSourceImpl(sl()));
   sl.registerLazySingleton<TransRemoteDatasource>(
       () => TransRemoteDatasourceImpl(sl()));
-   sl.registerLazySingleton<TransLocalDatasource>(
-      () => TransLocalDatasourceImpl(sl()));    
+  sl.registerLazySingleton<TransLocalDatasource>(
+      () => TransLocalDatasourceImpl(sl()));
 }
 
 void useCase() {
@@ -79,6 +85,8 @@ void useCase() {
   sl.registerLazySingleton(() => GetDetailTransaction(sl()));
   sl.registerLazySingleton(() => DeleteTransaction(sl()));
   sl.registerLazySingleton(() => UpdateTransaction(sl()));
+  sl.registerLazySingleton(() => LoadFromDBTransaction(sl()));
+  sl.registerLazySingleton(() => LoadFromAPITransaction(sl()));
 }
 
 void cubit() {
@@ -86,7 +94,7 @@ void cubit() {
   sl.registerFactory(() => LoginCubit(sl()));
   sl.registerFactory(() => SettingsCubit());
   sl.registerFactory(() => TransactionCubit(sl()));
-  sl.registerFactory(() => TransactionListCubit(sl()));
+  sl.registerFactory(() => TransactionListCubit(sl(), sl(), sl()));
   sl.registerFactory(() => TransactionDetailCubit(sl()));
   sl.registerFactory(() => TransactionDeleteCubit(sl()));
   sl.registerFactory(() => TransactionUpdateCubit(sl()));
@@ -94,5 +102,11 @@ void cubit() {
 
 void repositories() {
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
-  sl.registerLazySingleton<TransRepository>(() => TransRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<TransRepository>(
+      () => TransRepositoryImpl(sl(), sl(), sl()));
+}
+
+void network() {
+  sl.registerLazySingleton(() => DataConnectionChecker());
+  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
 }

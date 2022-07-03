@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:momen/features/transaction/domain/usecase/update_transaction.dart';
-import 'package:momen/features/transaction/presentation/updatecubit/transaction_update_cubit.dart';
-import 'package:momen/utils/currency_format.dart';
+import '../../../../di/di.dart';
+import '../../../auth/data/datasources/local/auth_pref_manager.dart';
+import '../../domain/usecase/update_transaction.dart';
+import '../updatecubit/transaction_update_cubit.dart';
+import '../../../../utils/currency_format.dart';
 import 'package:pattern_formatter/numeric_formatter.dart';
 
 import '../../../../resources/dimens.dart';
@@ -37,12 +39,11 @@ class _InOutComeState extends State<InOutCome> {
   ];
   String _category = "Pemasukan";
 
-  // ignore: unused_field
   String _amount = "";
   String _description = "";
 
-  TextEditingController? _controlDesc;
-  TextEditingController? _controlAmount;
+  TextEditingController _controlDesc = TextEditingController();
+  TextEditingController _controlAmount = TextEditingController();
 
   Transaction? trans;
 
@@ -90,13 +91,16 @@ class _InOutComeState extends State<InOutCome> {
                     if (trans?.data?.id == null) {
                       context.read<TransactionCubit>().createTransaction(
                             TransactionParams(
-                              description: _controlDesc?.text ?? "",
+                              userID: sl<AuthPrefManager>().userID,
+                              description: _controlDesc.text,
                               category: _category,
                               amount: (_category != "Pemasukan" &&
                                       _category != "Hutang")
-                                  ? int.tryParse("-${_controlAmount?.text}") ??
+                                  ? int.tryParse(
+                                          "-${_controlAmount.text.replaceAll('.', '')}") ??
                                       0
-                                  : int.tryParse(_controlAmount?.text ?? "") ??
+                                  : int.tryParse(_controlAmount.text
+                                          .replaceAll('.', '')) ??
                                       0,
                             ),
                           );
@@ -106,14 +110,12 @@ class _InOutComeState extends State<InOutCome> {
                           .updateTransactionID(
                             TransactionUpdateParams(
                               transID: trans?.data?.id,
-                              description: _controlDesc?.text ?? "",
+                              description: _controlDesc.text,
                               category: _category,
                               amount: (_category != "Pemasukan" &&
                                       _category != "Hutang")
-                                  ? int.tryParse("-${_controlAmount?.text}") ??
-                                      0
-                                  : int.tryParse(_controlAmount?.text ?? "") ??
-                                      0,
+                                  ? int.tryParse("-${_controlAmount.text}") ?? 0
+                                  : int.tryParse(_controlAmount.text) ?? 0,
                             ),
                           );
                     }
@@ -228,7 +230,8 @@ class _InOutComeState extends State<InOutCome> {
                   labelText: "Rp",
                 ),
                 inputFormatters: [
-                  ThousandsFormatter(formatter: NumberFormat.decimalPattern("id"))
+                  ThousandsFormatter(
+                      formatter: NumberFormat.decimalPattern("id"))
                 ],
               ),
               const SizedBox(

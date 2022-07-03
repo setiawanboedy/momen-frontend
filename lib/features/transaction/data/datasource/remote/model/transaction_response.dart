@@ -27,7 +27,6 @@ class Data {
   Data({
     this.id,
     this.userId,
-    this.name,
     this.description,
     this.category,
     this.amount,
@@ -35,7 +34,6 @@ class Data {
 
   int? id;
   int? userId;
-  String? name;
   String? description;
   String? category;
   int? amount;
@@ -43,7 +41,6 @@ class Data {
   factory Data.fromJson(Map<String, dynamic> json) => Data(
         id: json["id"],
         userId: json["user_id"],
-        name: json["name"],
         description: json["description"],
         category: json["category"],
         amount: json["amount"],
@@ -52,7 +49,6 @@ class Data {
   Map<String, dynamic> toJson() => {
         "id": id,
         "user_id": userId,
-        "name": name,
         "description": description,
         "category": category,
         "amount": amount,
@@ -81,4 +77,14 @@ class Meta {
         "code": code,
         "status": status,
       };
+}
+
+class TransFields {
+  static final List<String> values = [id,userID,description,category,amount];
+
+  static const String id = 'id';
+  static const String userID = 'user_id';
+  static const String description = 'description';
+  static const String category = 'category';
+  static const String amount = 'amount';
 }

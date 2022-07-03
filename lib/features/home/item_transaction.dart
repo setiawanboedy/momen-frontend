@@ -46,9 +46,9 @@ class ItemTransaction extends StatelessWidget {
                 leading:
                     BlocBuilder<TransactionListCubit, TransactionListState>(
                   builder: (context, state) {
-                    if (state.status == TransStatus.loading) {
+                    if (state.status == TransListStatus.loading) {
                       return const CircularProgressIndicator();
-                    } else if (state.status == TransStatus.success) {
+                    } else if (state.status == TransListStatus.success) {
                       return Image.asset(
                         "${state.iconCategory![transaction.category]}",
                         scale: 0.7,

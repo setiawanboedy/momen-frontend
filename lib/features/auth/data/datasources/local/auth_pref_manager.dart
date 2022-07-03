@@ -6,6 +6,7 @@ class AuthPrefManager {
   String kName = "name";
   String kEmail = "email";
   String kUserID = "userID";
+  String kLoadTrans = "loadTrans";
 
   SharedPreferences preferences;
   AuthPrefManager(this.preferences);
@@ -21,4 +22,7 @@ class AuthPrefManager {
 
   set userID(int? value) => preferences.setInt(kUserID, value ?? 0);
   int? get userID => preferences.getInt(kUserID);
+
+  set loadTrans(bool value) => preferences.setBool(kLoadTrans, value);
+  bool get loadTrans => preferences.getBool(kLoadTrans) ?? false;
 }

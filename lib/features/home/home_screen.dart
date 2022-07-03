@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     context.read<TransactionListCubit>().fetchTransaction(NoParams());
+    context.read<TransactionListCubit>().loadFromDB(NoParams());
     context.read<LoginCubit>().profile();
     super.initState();
   }
@@ -191,10 +192,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       BlocBuilder<TransactionListCubit, TransactionListState>(
                         builder: (_, state) {
                           switch (state.status) {
-                            case TransStatus.loading:
+                            case TransListStatus.loading:
                               return const Loading();
 
-                            case TransStatus.success:
+                            case TransListStatus.success:
                               return ListView.separated(
                                 reverse: true,
                                 padding: EdgeInsets.all(Dimens.space16),
@@ -214,10 +215,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     state.transList?.transList?.length ?? 0,
                               );
 
-                            case TransStatus.empty:
+                            case TransListStatus.empty:
                               return const Center(
                                   child: Text("Tidak ada transaksi"));
-                            case TransStatus.failure:
+                            case TransListStatus.failure:
                               return const Center(
                                 child: Empty(
                                   errorMessage: "Error",

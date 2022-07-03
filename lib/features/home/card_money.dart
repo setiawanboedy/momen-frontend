@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../utils/currency_format.dart';
-import '../../core/usecase/usecase.dart';
-import '../transaction/presentation/getcubit/transaction_list_cubit.dart';
-import '../../widgets/empty.dart';
-import '../../resources/dimens.dart';
 
 import '../../../../resources/palette.dart';
+import '../../core/usecase/usecase.dart';
+import '../../resources/dimens.dart';
+import '../../utils/currency_format.dart';
+import '../../widgets/empty.dart';
+import '../transaction/presentation/getcubit/transaction_list_cubit.dart';
 
 class CardMoney extends StatelessWidget {
   const CardMoney({
@@ -74,17 +74,17 @@ class CardMoney extends StatelessWidget {
                               TransactionListState>(
                             builder: (context, state) {
                               switch (state.status) {
-                                case TransStatus.loading:
+                                case TransListStatus.loading:
                                   context
                                       .read<TransactionListCubit>()
                                       .getTransactionList(NoParams());
                                   return _totalMoney(state);
-                                case TransStatus.success:
+                                case TransListStatus.success:
                                   return _totalMoney(state);
-                                case TransStatus.empty:
+                                case TransListStatus.empty:
                                   return _totalMoney(state);
 
-                                case TransStatus.failure:
+                                case TransListStatus.failure:
                                   return const Empty();
                               }
                             },
@@ -152,7 +152,7 @@ class CardMoney extends StatelessWidget {
 
 Widget _totalMoney(TransactionListState state) {
   return Text(
-    "Rp ${CurrencyFormat.convertToIdr(state.transList?.totalAmount, 0)}",
+    "Rp ${CurrencyFormat.convertToIdr(state.transList?.totalAmount ?? state.totalAmount, 0)}",
     style: const TextStyle(
       color: Colors.white,
       fontSize: 24,

@@ -14,22 +14,22 @@ enum TransStatus {
 
 class TransactionState extends Equatable {
   final TransStatus status;
-  final Transaction? trans;
+  final int? transID;
   final String? message;
   const TransactionState({
     this.status = TransStatus.loading,
-    this.trans,
+    this.transID,
     this.message,
   });
 
   TransactionState copyWith({
     TransStatus? status,
-    Transaction? trans,
+    int? transID,
     String? message,
   }) {
     return TransactionState(
       status: status ?? this.status,
-      trans: trans ?? this.trans,
+      transID: transID ?? this.transID,
       message: message ?? this.message,
     );
   }
@@ -37,7 +37,7 @@ class TransactionState extends Equatable {
   @override
   List<Object?> get props => [
         status,
-        trans,
+        transID,
         message,
       ];
 }

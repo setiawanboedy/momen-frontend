@@ -1,7 +1,6 @@
 
-import 'transaction_response.dart';
-
 import '../../../../domain/entities/transaction.dart';
+import 'transaction_response.dart';
 
 class TransactionDeleteResponse {
     TransactionDeleteResponse({

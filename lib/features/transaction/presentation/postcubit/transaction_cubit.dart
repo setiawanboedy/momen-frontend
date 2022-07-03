@@ -1,11 +1,9 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../data/datasource/local/trans_pref_manager.dart';
-import '../../domain/usecase/post_transaction.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/failure/failure.dart';
-import '../../../../di/di.dart';
-import '../../domain/entities/transaction.dart';
+import '../../../../utils/common.dart';
+import '../../domain/usecase/post_transaction.dart';
 
 part 'transaction_state.dart';
 
@@ -23,11 +21,10 @@ class TransactionCubit extends Cubit<TransactionState> {
             state.copyWith(status: TransStatus.failure, message: left.message));
       }
     }, (right) {
-      sl<TransPrefManager>().userID = right.data?.userId;
       emit(state.copyWith(
         status: TransStatus.success,
-        trans: right,
-        message: right.meta?.message,
+        transID: right,
+        message: "Success",
       ));
     });
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:momen/utils/currency_format.dart';
+import '../../../utils/currency_format.dart';
 import '../../transaction/presentation/deletecubit/transaction_delete_cubit.dart';
 import '../../transaction/presentation/getdetailcubit/transaction_detail_cubit.dart';
 import '../../../routes/app_route.dart';

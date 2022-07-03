@@ -1,7 +1,5 @@
 import '../../../../domain/entities/transaction_list.dart';
-
 import 'transaction_response.dart';
-
 
 class TransactionListResponse {
   TransactionListResponse({
@@ -27,5 +25,6 @@ class TransactionListResponse {
         "data": List<dynamic>.from(data?.map((x) => x.toJson()) ?? []),
       };
 
-  TransactionList toEntity() => TransactionList(meta?.message, data, totalTransaction);
+  TransactionList toEntity() =>
+      TransactionList(meta?.message, data, totalTransaction);
 }

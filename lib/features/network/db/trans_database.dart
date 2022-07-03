@@ -1,13 +1,16 @@
-import 'package:momen/features/transaction/domain/usecase/post_transaction.dart';
+import 'package:momen/core/usecase/usecase.dart';
+import 'package:momen/features/transaction/data/datasource/remote/model/transaction_list_response.dart';
+import 'package:momen/features/transaction/data/datasource/remote/model/transaction_response.dart';
+
+import '../../transaction/domain/usecase/post_transaction.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../core/error/exceptions.dart';
-import '../../transaction/data/datasource/local/model/transaction_db_model.dart';
 
 class TransDatabase {
   Database? _database;
-  final String tableTrans = 'transaction';
+  final String tableTrans = 'transaction_table';
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -23,29 +26,29 @@ class TransDatabase {
   }
 
   Future _createDB(Database db, int version) async {
-    const idType = 'INTEGER PRIMARY KEY';
+    const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const textTyp = 'TEXT NOT NULL';
     const integerType = 'INTEGER NOT NULL';
 
     await db.execute('''
       CREATE TABLE $tableTrans (
-        '${TransFields.id}' $idType,
-        '${TransFields.userID} $integerType,
-        '${TransFields.description} $textTyp,
-        '${TransFields.category} $textTyp,
-        '${TransFields.amount} $integerType
+        ${TransFields.id} $idType,
+        ${TransFields.userID} $integerType,
+        ${TransFields.description},
+        ${TransFields.category} $textTyp,
+        ${TransFields.amount} $integerType
       )
 ''');
   }
 
-  Future<int> createTrans(TransactionDBParams params) async {
+  Future<int> createTrans(TransactionParams params) async {
     final db = await database;
 
     final id = await db.insert(tableTrans, params.toJson());
     return id;
   }
 
-  Future<TransactionDbResponse> readTrans(int id) async {
+  Future<TransactionResponse> readTrans(int id) async {
     final db = await database;
     final maps = await db.query(tableTrans,
         columns: TransFields.values,
@@ -53,29 +56,32 @@ class TransDatabase {
         whereArgs: [id]);
 
     if (maps.isNotEmpty) {
-      return TransactionDbResponse.fromJson(maps.first);
+      final data = Data.fromJson(maps.first);
+      return TransactionResponse(data: data);
     } else {
       throw CacheException('ID $id not found');
     }
   }
 
-  Future<List<TransactionDbResponse>> readAllTrans() async {
+  Future<TransactionListResponse> getAllTrans(NoParams params) async {
     final db = await database;
 
     final result = await db.query(tableTrans);
-    return result.map((json) => TransactionDbResponse.fromJson(json)).toList();
+    final data = result.map((json) => Data.fromJson(json)).toList();
+    return TransactionListResponse(data: data);
   }
 
-  Future<TransactionDbResponse> updateTrans(TransactionDbResponse trans) async {
+  Future<int> updateTrans(TransactionParams trans) async {
     final db = await database;
 
     final id = await db.update(
       tableTrans,
       trans.toJson(),
       where: '${TransFields.id} = ?',
-      whereArgs: [trans.id],
+      whereArgs: [trans.transID],
     );
-    return trans.copy(id: id);
+    
+    return id;
   }
 
   Future<int> delete(int transID) async {
