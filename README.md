@@ -2,7 +2,7 @@
 
 Money Management.
 
-## Getting Started
+## LICENSE
 
 Creative Commons Legal Code
 
