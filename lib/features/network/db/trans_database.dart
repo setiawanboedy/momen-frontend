@@ -9,7 +9,8 @@ import 'package:sqflite/sqflite.dart';
 import '../../../core/error/exceptions.dart';
 
 class TransDatabase {
-  Database? _database;
+
+   Database? _database;
   final String tableTrans = 'transaction_table';
 
   Future<Database> get database async {
@@ -80,7 +81,7 @@ class TransDatabase {
       where: '${TransFields.id} = ?',
       whereArgs: [trans.transID],
     );
-    
+
     return id;
   }
 

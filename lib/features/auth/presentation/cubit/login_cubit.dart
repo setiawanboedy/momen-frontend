@@ -45,6 +45,7 @@ class LoginCubit extends Cubit<LoginState> {
       sl<AuthPrefManager>().userID = 0;
       sl<AuthPrefManager>().name = '';
       sl<AuthPrefManager>().email = '';
+      sl<AuthPrefManager>().loadTrans = false;
 
       emit(state.copyWith(
         status: LoginStatus.success,

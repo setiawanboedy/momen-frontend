@@ -5,6 +5,7 @@ import 'package:momen/di/di.dart';
 import 'package:momen/features/auth/data/datasources/local/auth_pref_manager.dart';
 import 'package:momen/features/transaction/presentation/getcubit/transaction_list_cubit.dart';
 import 'package:momen/routes/app_route.dart';
+import 'package:momen/utils/common.dart';
 import 'package:momen/utils/ext/context.dart';
 import 'package:momen/widgets/parent.dart';
 
@@ -23,31 +24,25 @@ class _LoadFromApiState extends State<LoadFromApi> {
   }
 
   _loadFromApi() {
-    context.read<TransactionListCubit>().loadFromAPITransaction(NoParams());
+    context.read<TransactionListCubit>().loadFromAPI(NoParams());
+
+    log.e("load data init");
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<TransactionListCubit, TransactionListState>(
-        listener: (context, state) {
-      if (state.status.isSuccess) {
-        context.goToReplace(AppRoute.mainScreen);
+    return BlocListener<TransactionListCubit, TransactionListState>(
+      listener: (context, state) {
+        if(state.status == TransListStatus.success){
+          context.goTo(AppRoute.mainScreen);
         sl<AuthPrefManager>().loadTrans = true;
-      }
-    }, builder: (context, state) {
-      if (state.status.isFailure) {
-        return const Parent(
-          child: Center(
+        }
+      },
+      child: const Parent(
+        child: Center(
             child: Text(
-              "Failed laod data",
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-        );
-      }
-      return const Parent(
-        child: Center(child: Text("Load data dari server \n pastikan anda terkoneksi internet...")),
-      );
-    });
+                "Load data dari server \n pastikan anda terkoneksi internet...")),
+      ),
+    );
   }
 }

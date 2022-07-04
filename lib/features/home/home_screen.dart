@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:momen/di/di.dart';
+import 'package:momen/features/network/db/trans_database.dart';
 import '../../core/usecase/usecase.dart';
 import '../transaction/presentation/getcubit/transaction_list_cubit.dart';
 import '../../widgets/empty.dart';
@@ -30,6 +32,12 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<TransactionListCubit>().loadFromDB(NoParams());
     context.read<LoginCubit>().profile();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    sl<TransDatabase>().close();
+    super.dispose();
   }
 
   @override

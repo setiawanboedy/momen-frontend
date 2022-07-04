@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../di/di.dart';
 import '../../../routes/app_route.dart';
+import '../../../utils/common.dart';
 import '../../../utils/ext/context.dart';
 import '../../../widgets/parent.dart';
 import '../../auth/data/datasources/local/auth_pref_manager.dart';
@@ -25,11 +26,12 @@ class _SplashScreenState extends State<SplashScreen> {
   void _initData() {
     if (sl<AuthPrefManager>().isLogin) {
       if (sl<AuthPrefManager>().loadTrans) {
+        log.e("load data loadtransR ${sl<AuthPrefManager>().loadTrans}");
         context.goToReplace(AppRoute.mainScreen);
+        
       } else {
         context.goTo(AppRoute.loadFromApi);
       }
-      context.goToReplace(AppRoute.loadFromApi);
     } else {
       context.goToReplace(AppRoute.authScreen);
     }
