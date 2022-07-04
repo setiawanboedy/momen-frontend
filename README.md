@@ -2,6 +2,8 @@
 
 Money Management.
 
+[![Dart](https://github.com/setiawanboedy/momen-frontend/actions/workflows/dart.yml/badge.svg)](https://github.com/setiawanboedy/momen-frontend/actions/workflows/dart.yml)
+
 ## LICENSE
 
 Creative Commons Legal Code
